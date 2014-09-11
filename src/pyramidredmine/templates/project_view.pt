@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>LMU Internetdienste - Redmine Webprojekt</title>
+</head>
+<body>
+<a href="${request.route_url('project_add')}">
+    Weiteres Webprojekt anlegen
+</a> |
+
+
+<h1>${project.identifier}: ${project.name}</h1>
+<p><a href="${structure: project.url}">Projekt anzeigen</a></p>
+</body>
+</html>

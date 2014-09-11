@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <title>LMU Internetdienste - Redmine Webprojekte</title>
+</head>
+<body>
+<h1>LMU Internetdienste - Redmine Webprojekte</h1>
+
+<a href="${request.route_url('project_add')}">Füge
+    Webprojekt hinzu</a>
+<ul>
+    <li tal:repeat="project projects">
+        <a href="${request.route_url('project_view', id=project.id)}">
+                ${project.id}: ${project.name}
+        </a>
+    </li>
+</ul>
+</body>
+</html>
