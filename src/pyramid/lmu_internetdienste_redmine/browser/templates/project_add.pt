@@ -10,9 +10,9 @@
         <script src="${request.static_url(reqt)}"
                 type="text/javascript"></script>
     </tal:block>
-    <link href="${request.static_url('pyramidredmine:static/css/normalize.css')}" rel="stylesheet">
-    <link href="${request.static_url('pyramidredmine:static/css/foundation.min.css')}" rel="stylesheet">
-    <link href="${request.static_url('pyramidredmine:static/css/app.css')}" rel="stylesheet">
+    <link href="${request.static_url('pyramid.redmine:static/css/normalize.css')}" rel="stylesheet">
+    <link href="${request.static_url('pyramid.redmine:static/css/foundation.min.css')}" rel="stylesheet">
+    <link href="${request.static_url('pyramid.redmine:static/css/app.css')}" rel="stylesheet">
 </head>
 <body>
 <div class="row">
@@ -21,8 +21,8 @@
         <p>${structure: form}</p>
     </div>
 </div>
-    <script src="${request.static_url('pyramidredmine:static/js/jquery-1.11.1.min.js')}"></script>
-    <script src="${request.static_url('pyramidredmine:static/js/foundation.min.js')}"></script>
+    <script src="${request.static_url('pyramid.redmine:static/js/jquery-1.11.1.min.js')}"></script>
+    <script src="${request.static_url('pyramid.redmine:static/js/foundation.min.js')}"></script>
     <script type="text/javascript">
         deform.load()
     </script>

@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
 
-from zope.interface import Interface
-
 import colander
 import deform.widget
 
-class IRedmineProject(colander.MappingSchema, Interface):
+from zope.interface import Interface
+
+from pyramid.url import resource_url
+
+from ..config import __redmine_config as redmine_config
+
+class IRedmineWebProject(colander.MappingSchema):
     name = colander.SchemaNode(
         colander.String(),
         title="Projekt Titel:",
@@ -30,7 +34,7 @@ class IRedmineProject(colander.MappingSchema, Interface):
         colander.String(),
         title="Unterprojekt von:",
         widget=deform.widget.SelectWidget(
-            values=redmine_config.base_projects
+            values=redmine_config.fiona_base_projects
             )
         )
 
@@ -61,3 +65,23 @@ class IRedmineProject(colander.MappingSchema, Interface):
             ),
         missing=colander.drop,
         )
+
+
+class MemoryTmpStore(dict):
+    """ Instances of this class implement the
+    :class:`deform.interfaces.FileUploadTempStore` interface"""
+    def preview_url(self, uid):
+        return None
+
+tmpstore = MemoryTmpStore()
+
+class IRedmineFionaUpdateProjects(colander.MappingSchema):
+    csv_file = colander.SchemaNode(
+        deform.FileData(),
+        title="Upload eines Fiona Projekt Dumps",
+        description="""Bitte laden Sie einen Projekt Dump aus Fiona hoch, 
+diese Datei enthält eine Comma Separated Value Set von Fiona Name, Pfad, ...; 
+Die erste Zeile enthält die Zeilenüberschriften.""",
+        widget=deform.widget.FileUploadWidget(tmpstore)
+        )
+

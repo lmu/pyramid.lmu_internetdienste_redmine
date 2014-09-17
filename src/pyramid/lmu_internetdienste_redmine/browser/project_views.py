@@ -13,50 +13,13 @@ from redmine.exceptions import ResourceNotFoundError
 from redmine.exceptions import ResourceAttrError
 from redmine.exceptions import ValidationError
 
-redmine = Redmine('https://www.scm.verwaltung.uni-muenchen.de/spielwiese/', username='admin', password='admin')
+from ..config import logger
+from ..config import __redmine_config as redmine_config
+from ..interfaces.webproject import IRedmineFionaUpdateProjects
+from ..interfaces.webproject import IRedmineWebProject
 
-class RedmineConfig(object):
-
-    def __init__(self):
-            #master-Project
-        master_project_id = 'webprojekte'
-        self.master_project = redmine.project.get(master_project_id)
-
-        custom_fields = redmine.custom_field.all()
-        #projects custom fields
-        self.cf_lang_id = None
-        self.cf_status_id = None
-
-
-        self.statuss = [('online', 'online'), ('offline', 'offline')]
-        self.langs = [('de', 'de'), ('en', 'en')]
-
-        for cf in custom_fields:
-            if cf.name == "Sprache":
-                self.cf_lang_id = cf.id
-                self.langs = [(lang['value'], lang['value']) for lang in cf.possible_values ]
-            elif cf.name == "Status" and cf.customized_type == "project":
-                self.cf_status_id = cf.id
-                self.statuss = [(lang['value'], lang['value']) for lang in cf.possible_values ]
-
-        self.task_id = 1
-        trackers = redmine.tracker.all()
-        for tracker in trackers:
-            if tracker.name == "Task":
-                self.task_id = tracker.id
-
-        self.base_projects = []
-        all_projects = redmine.project.all()
-        for project in all_projects:
-            try:
-                if project.parent != None and project.parent.id == self.master_project.id:
-                    self.base_projects.append((project.id,u"{identifier}: {name}".format(identifier=project.identifier, name=project.name)))
-            except ResourceNotFoundError, e:
-                pass
-            except ResourceAttrError, e:
-                pass
-
-redmine_config = RedmineConfig()
+from ..utils import update_redmine_projects_with_fiona_dump
+from ..utils import setup_webproject
 
 class RedmineProjectView(object):
 
@@ -66,7 +29,7 @@ class RedmineProjectView(object):
 
     @property
     def redmineproject_form(self):
-        schema = RedmineProject()
+        schema = IRedmineWebProject()
         return deform.Form(schema, buttons=('submit',))
 
     @property
@@ -84,6 +47,12 @@ class RedmineProjectView(object):
 
         if 'submit' in self.request.params:
             controls = self.request.POST.items()
+            import ipdb; ipdb.set_trace()
+
+            while True:
+                self.request.response.write('Test')
+                self.request.response.flush()
+
             try:
                 appstruct = self.redmineproject_form.validate(controls)
             except deform.ValidationFailure as e:
@@ -111,4 +80,40 @@ class RedmineProjectView(object):
         import ipdb; ipdb.set_trace()
         return dict(project=project)
 
-    
+class RedmineFionaUpdateProjectView(object):
+
+    def __init__(self, request):
+        self.request = request
+
+    @property
+    def update_projects_form(self):
+        schema = IRedmineFionaUpdateProjects()
+        return deform.Form(schema, buttons=('submit',))
+
+    @property
+    def reqts(self):
+        return self.update_projects_form.get_widget_resources()
+
+    @view_config(route_name='update_fiona_projects',
+                 renderer='templates/update_fiona_projects.pt')
+    def update_projects(self):
+        form = self.update_projects_form.render()
+
+        if 'submit' in self.request.params:
+            controls = self.request.POST.items()
+            try:
+                appstruct = self.update_projects_form.validate(controls)
+            except deform.ValidationFailure as e:
+                # Form is NOT valid
+                return dict(form=e.render())
+            input_file = appstruct['csv_file']
+
+            logger.info('process file: '+ input_file['filename'])
+
+            update_redmine_projects_with_fiona_dump(input_file['fp'])
+            
+            #return "Successful"
+            #return HTTPFound(project.url)
+
+        return dict(form=form)
+        
