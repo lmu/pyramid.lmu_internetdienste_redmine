@@ -22,7 +22,7 @@ requires = [
     # Development Packages
     'pyramid_debugtoolbar',
     'ipdb',
-    ]
+]
 
 setup(name='pyramid.lmu_internetdienste_redmine',
       version='1.0',
@@ -33,7 +33,7 @@ setup(name='pyramid.lmu_internetdienste_redmine',
       url='https://github.com/loechel/pyramid.lmu_internetdienste_redmine',
       license="GPL",
       keywords='web pyramid pylons',
-      packages=find_packages('src',exclude=['ez_setup']),
+      packages=find_packages('src', exclude=['ez_setup']),
       package_dir={'': 'src'},
       namespace_packages=['pyramid'],
       include_package_data=True,
@@ -41,11 +41,11 @@ setup(name='pyramid.lmu_internetdienste_redmine',
       tests_require=requires,
       zip_safe=False,
       classifiers=[
-        "Programming Language :: Python",
-        "Framework :: Pyramid",
-        "Topic :: Internet :: WWW/HTTP",
-        "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
-        ],
+          "Programming Language :: Python",
+          "Framework :: Pyramid",
+          "Topic :: Internet :: WWW/HTTP",
+          "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
+      ],
       #test_suite="pyramid.lmu_internetdienste_redmine",
       entry_points="""\
       [paste.app_factory]
