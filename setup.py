@@ -50,5 +50,8 @@ setup(name='pyramid.lmu_internetdienste_redmine',
       entry_points="""\
       [paste.app_factory]
       main = pyramid.lmu_internetdienste_redmine:main
+
+      [console_scripts]
+      pyramid_redmine = pyramid.lmu_internetdienste_redmine.cli:main
       """,
       )

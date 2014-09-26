@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="de" xml:lang="de"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      metal:define-macro="layout">
+<head>
+    <title>LMU Internetdienste - Redmine Webprojekt</title>
+
+    <tal:block tal:repeat="reqt view.reqts['css']">
+        <link rel="stylesheet" type="text/css"
+              href="${request.static_url(reqt)}"/>
+    </tal:block>
+    <tal:block tal:repeat="reqt view.reqts['js']">
+        <script src="${request.static_url(reqt)}"
+                type="text/javascript"></script>
+    </tal:block>
+
+    <link href="${request.static_url('pyramid.lmu_internetdienste_redmine:static/css/normalize.css')}" rel="stylesheet">
+    <link href="${request.static_url('pyramid.lmu_internetdienste_redmine:static/css/foundation.min.css')}" rel="stylesheet">
+    <link href="${request.static_url('pyramid.lmu_internetdienste_redmine:static/css/app.css')}" rel="stylesheet">
+</head>
+<body>
+<header>
+<div class="row">
+    <div class="columns small-12">
+
+
+
+
+
+    </div>
+</div>
+</header>
+
+<main>
+    <div metal:define-slot="content">
+    </div>
+</main>
+
+<footer>
+<div class="row">
+    <div class="columns small-12">
+        
+
+
+
+
+    </div>
+</div>
+</footer>
+
+    <script src="${request.static_url('pyramid.lmu_internetdienste_redmine:static/js/jquery-1.11.1.min.js')}"></script>
+    <script src="${request.static_url('pyramid.lmu_internetdienste_redmine:static/js/foundation.min.js')}"></script>
+    <div metal:define-slot="bottom_scripts"></div>
+</body>
+</html>

@@ -8,33 +8,64 @@ from redmine.exceptions import ResourceNotFoundError
 from redmine.exceptions import ResourceAttrError
 from redmine.exceptions import ValidationError
 
-#default_redmine_location='https://www.scm.verwaltung.uni-muenchen.de/spielwiese/'
-default_redmine_location='http://localhost/spielwiese/'
-default_username='admin'
-default_password='admin'
+#default_redmine_location='https://www.scm.verwaltung.uni-muenchen.de/spielwiese/' # NOQA
+default_redmine_location = 'http://localhost/spielwiese/'
+default_username = 'admin'
+default_password = 'admin'
+
+MAIN_MENU = [
+    {'href': '', 'title': 'Home'},
+]
+
+
+
+
+
 
 #master_webproject = 'webprojekte'
 master_webproject = 'webauftritte'
 
 logger = logging.getLogger('pyramid.lmu_internetdienste_redmine')
 
+
 class RedmineConfig(object):
 
-    def __init__(self, 
+    def __init__(self,
                  location=default_redmine_location,
                  username=default_username,
                  password=default_password,
                  apikey=None,
-                 impersonate=None,
-                ):
-        if apikey != None and impersonate != None:
-            self.redmine = Redmine(location, key=apikey, impersonate=impersonate)
-        elif apikey != None and impersonate == None:
+                 impersonate=None):
+
+        if apikey is not None and impersonate is not None:
+            self.redmine = Redmine(
+                location,
+                key=apikey,
+                impersonate=impersonate)
+        elif apikey is not None and impersonate is None:
             self.redmine = Redmine(location, key=apikey)
-        elif apikey == None and username != None and username != '' and password != None and password != '' and impersonate != None:
-            self.redmine = Redmine(location, username=username, password=password, impersonate=impersonate)
-        elif apikey == None and username != None and username != '' and password != None and password != '' and impersonate == None:
-            self.redmine = Redmine(location, username=username, password=password)
+        elif apikey is None and \
+                username is not None and \
+                username != '' and \
+                password is not None and \
+                password != '' and \
+                impersonate is not None:
+            self.redmine = Redmine(
+                location,
+                username=username,
+                password=password,
+                impersonate=impersonate)
+        elif apikey is None and \
+                username is not None and \
+                username != '' and \
+                password is not None and \
+                password != '' and \
+                impersonate is None:
+
+            self.redmine = Redmine(
+                location,
+                username=username,
+                password=password)
         else:
             self.redmine = Redmine()
 
@@ -67,8 +98,12 @@ class RedmineConfig(object):
         all_projects = self.redmine.project.all()
         for project in all_projects:
             try:
-                if project.parent != None and project.parent.id == self.master_project.id:
-                    self.fiona_base_projects.append((project.id,u"{identifier}: {name}".format(identifier=project.identifier, name=project.name)))
+                if project.parent is not None and \
+                        project.parent.id == self.master_project.id:
+                    self.fiona_base_projects.append(
+                        (project.id, u"{identifier}: {name}".format(
+                            identifier=project.identifier,
+                            name=project.name)))
             except ResourceNotFoundError, e:
                 pass
             except ResourceAttrError, e:
