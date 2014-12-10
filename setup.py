@@ -11,18 +11,6 @@ with open(os.path.join(here, 'README.rst')) as f:
 with open(os.path.join(here, 'docs', 'CHANGES.rst')) as f:
     CHANGES = f.read()
 
-# TODO separate requirements
-requires = [
-    'pyramid',
-    'pyramid_chameleon',
-    'waitress',
-    'deform',
-    'python-redmine',
-    'zope.interface',
-    # Development Packages
-    'pyramid_debugtoolbar',
-    'ipdb',
-]
 
 setup(name='pyramid.lmu_internetdienste_redmine',
       version='1.0',
@@ -37,8 +25,20 @@ setup(name='pyramid.lmu_internetdienste_redmine',
       package_dir={'': 'src'},
       namespace_packages=['pyramid'],
       include_package_data=True,
-      install_requires=requires,
-      tests_require=requires,
+      install_requires=[
+          'setuptools',
+          'pyramid',
+          'pyramid_chameleon',
+          'waitress',
+          'deform',
+          'python-redmine',
+          'zope.interface',
+          # Development Packages
+          'pyramid_debugtoolbar',
+          'ipdb',
+      ],
+      tests_require=[
+      ],
       zip_safe=False,
       classifiers=[
           "Programming Language :: Python",

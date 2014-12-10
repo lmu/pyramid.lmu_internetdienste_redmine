@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import colander
 import deform.widget
 
 import ipdb
@@ -13,6 +12,8 @@ from ..config import __redmine_config as redmine_config
 from ..config import __redmine as redmine
 from ..interfaces.webproject import IRedmineFionaUpdateProjects
 from ..interfaces.webproject import IRedmineWebProject
+from ..interfaces.webproject import IRedmineMilestoneProject
+from ..interfaces.webproject import ITicketSchema
 
 from ..utils import update_redmine_projects_with_fiona_dump
 from ..utils import setup_webproject
@@ -20,19 +21,43 @@ from ..utils import setup_webproject
 from .layouts import Layouts
 
 
-class RedmineProjectView(Layouts):
+class RedmineBaseView(Layouts):
 
     def __init__(self, request):
         self.request = request
+
+    @property
+    def reqts(self):
+        return {'css': None, 'js': None}
+
+
+class RedmineGenericViews(RedmineBaseView):
+
+    @view_config(
+        route_name='home',
+        renderer='templates/home.pt')
+    def home_view(self):
+        return {}
+
+
+class RedmineProjectView(RedmineBaseView):
 
     @property
     def redmineproject_form(self):
         schema = IRedmineWebProject()
         return deform.Form(schema, buttons=('submit',))
 
-    @property
-    def reqts(self):
-        return self.redmineproject_form.get_widget_resources()
+    #@property
+    def redminemilestoneproject_form(self, project_id):
+        schema = IRedmineMilestoneProject()
+        project_schema = schema.get('project')
+
+        m01_schema = schema.get('milestone_01_playlandphase')
+        #ipdb.set_trace()
+        m01_schema.add(ITicketSchema().get('activate'))
+        #project_schema.default = project_id
+        #ipdb.set_trace()
+        return deform.Form(schema, buttons=('submit',))
 
     @view_config(
         route_name='projects_view',
@@ -40,19 +65,20 @@ class RedmineProjectView(Layouts):
     def redmineproject_view(self):
         return dict(projects=redmine.project.all())
 
-    @view_config(route_name='project_add',
-                 renderer='templates/project_add.pt')
+    @view_config(
+        route_name='project_add',
+        renderer='templates/project_add.pt')
     def project_add(self):
         form = self.redmineproject_form.render()
 
         if 'submit' in self.request.params:
             controls = self.request.POST.items()
 
-            ipdb.set_trace()
+            #ipdb.set_trace()
 
-            while True:
-                self.request.response.write('Test')
-                self.request.response.flush()
+            #while True:
+            #    self.request.response.write('Test')
+            #    self.request.response.flush()
 
             try:
                 appstruct = self.redmineproject_form.validate(controls)
@@ -75,6 +101,37 @@ class RedmineProjectView(Layouts):
         return dict(form=form, title="Add Webproject")
 
     @view_config(
+        route_name='project_add_milestones',
+        renderer='templates/project_add_milestones.pt')
+    def project_add_milestones_view(self):
+        pid = self.request.matchdict['id']
+        project = redmine.project.get(pid)
+
+        form = self.redminemilestoneproject_form(pid).render()
+
+        if 'submit' in self.request.params:
+            controls = self.request.POST.items()
+
+            #ipdb.set_trace()
+
+            #while True:
+            #    self.request.response.write('Test')
+            #    self.request.response.flush()
+
+            try:
+                appstruct = self.redminemilestoneproject_form(pid).validate(controls)
+            except deform.ValidationFailure as e:
+                # Form is NOT valid
+                return dict(form=e.render())
+
+            ipdb.set_trace()
+            #add_milestone_initialgespraech(project=project,)
+
+            return HTTPFound(project.url)
+
+        return dict(form=form, title="Add Milestone to Webproject")
+
+    @view_config(
         route_name='project_view',
         renderer='templates/project_view.pt')
     def projectpage_view(self):
@@ -86,10 +143,7 @@ class RedmineProjectView(Layouts):
         return dict(project=project)
 
 
-class RedmineFionaUpdateProjectView(Layouts):
-
-    def __init__(self, request):
-        self.request = request
+class RedmineFionaUpdateProjectView(RedmineBaseView):
 
     @property
     def update_projects_form(self):
