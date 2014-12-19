@@ -8,8 +8,8 @@ from redmine.exceptions import ResourceNotFoundError
 from redmine.exceptions import ResourceAttrError
 from redmine.exceptions import ValidationError
 
-#default_redmine_location='https://www.scm.verwaltung.uni-muenchen.de/spielwiese/' # NOQA
-default_redmine_location = 'http://localhost/spielwiese/'
+default_redmine_location='https://www.scm.verwaltung.uni-muenchen.de/spielwiese/' # NOQA
+#default_redmine_location = 'http://localhost/spielwiese/'
 default_username = 'admin'
 default_password = 'admin'
 
@@ -22,8 +22,8 @@ MAIN_MENU = [
 
 
 
-#master_webproject = 'webprojekte'
-master_webproject = 'webauftritte'
+master_webproject = 'webprojekte'
+#master_webproject = 'webauftritte'
 
 logger = logging.getLogger('pyramid.lmu_internetdienste_redmine')
 
@@ -65,7 +65,8 @@ class RedmineConfig(object):
             self.redmine = Redmine(
                 location,
                 username=username,
-                password=password)
+                password=password,
+                requests={'verify': False})
         else:
             self.redmine = Redmine()
 
