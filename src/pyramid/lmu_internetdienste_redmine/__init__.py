@@ -14,6 +14,8 @@ def main(global_config, **settings):
     config.add_route('projects_view', '/projects')
     config.add_route('project_view', '/project/{id}')
     config.add_route('project_add', '/project_add')
+    config.add_route('project_add_milestones', '/project_add_milestones/{id}')
+    config.add_route('project_change_identifier', '/project_change_identifier/{id}')
     config.add_route('update_fiona_projects', '/update_fiona_projects')
 
     # Add Static Resources
