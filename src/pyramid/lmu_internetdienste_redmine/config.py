@@ -104,10 +104,10 @@ class RedmineConfig(object):
                         (project.id, u"{identifier}: {name}".format(
                             identifier=project.identifier,
                             name=project.name)))
-            except ResourceNotFoundError, e:
-                pass
-            except ResourceAttrError, e:
-                pass
+            except ResourceNotFoundError as e:
+                logger.error(e)
+            except ResourceAttrError as e:
+                logger.error(e)
         return self
 
 
