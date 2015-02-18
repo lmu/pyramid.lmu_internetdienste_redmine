@@ -7,11 +7,11 @@
 <head>
     <title>LMU Internetdienste - Redmine Webprojekt</title>
 
-    <tal:block tal:repeat="reqt view.reqts['css']">
+    <tal:block tal:repeat="reqt view.reqts['css']" tal:condition="view.reqts['css']">
         <link rel="stylesheet" type="text/css"
               href="${request.static_url(reqt)}"/>
     </tal:block>
-    <tal:block tal:repeat="reqt view.reqts['js']">
+    <tal:block tal:repeat="reqt view.reqts['js']" tal:condition="view.reqts['js']">
         <script src="${request.static_url(reqt)}"
                 type="text/javascript"></script>
     </tal:block>

@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
 
-import logging
-
 from redmine import Redmine
 from redmine.exceptions import AuthError
 from redmine.exceptions import ResourceNotFoundError
 from redmine.exceptions import ResourceAttrError
 from redmine.exceptions import ValidationError
+
+import logging
+
+# Debugging Modules
+import ipdb
 
 #default_redmine_location='https://www.scm.verwaltung.uni-muenchen.de/spielwiese/' # NOQA
 default_redmine_location = 'http://localhost/spielwiese/'
@@ -22,8 +25,8 @@ MAIN_MENU = [
 
 
 
-#master_webproject = 'webprojekte'
-master_webproject = 'webauftritte'
+master_webproject = 'webprojekte'
+#master_webproject = 'webauftritte'
 
 logger = logging.getLogger('pyramid.lmu_internetdienste_redmine')
 
@@ -65,19 +68,22 @@ class RedmineConfig(object):
             self.redmine = Redmine(
                 location,
                 username=username,
-                password=password)
+                password=password,
+                requests={'verify': False})
         else:
             self.redmine = Redmine()
 
     def base_config(self):
         self.master_project = self.redmine.project.get(master_webproject)
 
+        self.ticket_statuss = [(state['id'],state['name']) for state in self.redmine.issue_status.all()]
+
         custom_fields = self.redmine.custom_field.all()
         #projects custom fields
         self.cf_lang_id = None
         self.cf_status_id = None
 
-        self.statuss = [('online', 'online'), ('offline', 'offline')]
+        self.project_statuss = [('online', 'online'), ('offline', 'offline')]
         self.langs = [('de', 'de'), ('en', 'en')]
 
         for cf in custom_fields:
@@ -86,7 +92,7 @@ class RedmineConfig(object):
                 self.langs = [(lang['value'], lang['value']) for lang in cf.possible_values ]
             elif cf.name == "Status" and cf.customized_type == "project":
                 self.cf_status_id = cf.id
-                self.statuss = [(lang['value'], lang['value']) for lang in cf.possible_values ]
+                self.project_statuss = [(lang['value'], lang['value']) for lang in cf.possible_values ]
 
         self.task_id = 1
         trackers = self.redmine.tracker.all()
@@ -95,8 +101,13 @@ class RedmineConfig(object):
                 self.task_id = tracker.id
 
         self.fiona_base_projects = []
+        self.all_projects = []
         all_projects = self.redmine.project.all()
         for project in all_projects:
+            self.all_projects.append(
+                (project.id, u"{identifier}: {name}".format(
+                    identifier=project.identifier,
+                    name=project.name)))
             try:
                 if project.parent is not None and \
                         project.parent.id == self.master_project.id:
@@ -105,9 +116,15 @@ class RedmineConfig(object):
                             identifier=project.identifier,
                             name=project.name)))
             except ResourceNotFoundError as e:
+<<<<<<< HEAD
                 logger.error(e)
             except ResourceAttrError as e:
                 logger.error(e)
+=======
+                logger.debug(e)
+            except ResourceAttrError as e:
+                logger.debug(e)
+>>>>>>> 3b79c6c4430cbeb740420b8e85578a69eeb9c011
         return self
 
 
